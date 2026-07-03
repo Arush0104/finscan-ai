@@ -5,7 +5,6 @@ const pool = require('../db/pool');
 
 const router = express.Router();
 
-// SIGNUP
 router.post('/signup', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -18,7 +17,7 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
-    // Check if user already exists
+
     const existing = await pool.query(
       'SELECT id FROM users WHERE email = $1',
       [email]
@@ -27,18 +26,14 @@ router.post('/signup', async (req, res) => {
       return res.status(409).json({ error: 'An account with this email already exists' });
     }
 
-    // Hash the password (10 = salt rounds, industry standard)
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // Insert new user
     const result = await pool.query(
       'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email, created_at',
       [email, passwordHash]
     );
 
     const user = result.rows[0];
-
-    // Create JWT token
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET,
@@ -53,7 +48,6 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// LOGIN
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -62,25 +56,21 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Find user by email
+
     const result = await pool.query(
       'SELECT * FROM users WHERE email = $1',
       [email]
     );
     const user = result.rows[0];
-
-    // Don't reveal whether email exists or not (security best practice)
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Compare entered password with stored hash
+
     const isValid = await bcrypt.compare(password, user.password_hash);
     if (!isValid) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
-
-    // Create JWT token
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET,

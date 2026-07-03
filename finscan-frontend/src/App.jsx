@@ -48,12 +48,12 @@ function App() {
         }
       });
       setUploadMsg('File uploaded successfully!');
-      fetchDocuments(); // refresh the list
+      fetchDocuments(); 
     } catch (err) {
       setUploadMsg(err.response?.data?.error || 'Upload failed');
     } finally {
       setUploading(false);
-      e.target.value = ''; // reset file input
+      e.target.value = ''; 
     }
   };
 
@@ -69,8 +69,6 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-2xl mx-auto">
-
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-xl font-medium">FinScan</h1>
           <button onClick={handleLogout} className="text-sm text-gray-500 underline">
@@ -102,8 +100,6 @@ function App() {
             </p>
           )}
         </div>
-
-        {/* Documents list */}
         <div className="bg-white rounded-xl border border-gray-100">
           <div className="p-6 border-b border-gray-100">
             <h2 className="font-medium">Uploaded documents</h2>

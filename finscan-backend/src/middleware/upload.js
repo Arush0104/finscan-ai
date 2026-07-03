@@ -18,9 +18,9 @@ const fileFilter = function (req, file, cb) {
   const ext = path.extname(file.originalname).toLowerCase();
 
   if (allowed.includes(ext)) {
-    cb(null, true); // accept the file
+    cb(null, true); 
   } else {
-    cb(new Error('Only PDF and CSV files are allowed'), false); // reject it
+    cb(new Error('Only PDF and CSV files are allowed'), false); 
   }
 };
 
@@ -28,7 +28,7 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB max
+    fileSize: 10 * 1024 * 1024
   }
 });
 
